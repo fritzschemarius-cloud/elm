@@ -2,7 +2,7 @@ title: Lernwerkstatt
 lang: de
 # Bei einem Repository namens <name>.github.io bleibt baseurl leer.
 # Bei einem anderen Repository-Namen hier "/<repository-name>" eintragen.
-baseurl: "/elm/drehtisch"
+baseurl: "/elm"
 
 collections:
   aufgaben:
