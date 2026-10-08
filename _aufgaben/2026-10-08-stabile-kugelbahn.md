@@ -2,7 +2,6 @@
 title: Auswertung mit Viana2
 permalink: /drehtisch/A1
 bilder:
-  - bild: /assets/media/IMG_0698-1.jpg
   - bild: /assets/media/IMG_0698.jpg
     text: 1. Wähle in Viana "Meine Videosammlung" aus.   2. Wähle das Video aus,
       welches ausgewertet werden soll.
