@@ -1,5 +1,5 @@
 ---
-title: Stabile Kugelbahn
+title: Auswertung mit Viana2
 permalink: /drehtisch/C1
 bilder:
   - bild: /assets/media/IMG_0698.jpg
