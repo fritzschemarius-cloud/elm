@@ -1,0 +1,49 @@
+media:
+  input: assets/media
+  output: /assets/media
+
+content:
+  - name: aufgaben
+    label: Aufgaben
+    type: collection
+    path: _aufgaben
+    view:
+      fields: [title, permalink]
+      primary: title
+    fields:
+      - name: title
+        label: Überschrift
+        type: string
+        required: true
+        description: "Wird groß oben auf der Seite angezeigt, z. B. „Aufgabe 1: Drehimpuls spüren“."
+      - name: permalink
+        label: Adresse für den QR-Code
+        type: string
+        required: true
+        description: "Teil nach der Domain, z. B. /drehtisch/Aufgabe1 (Groß-/Kleinschreibung beachten)."
+      - name: bilder
+        label: Bilderserie
+        type: object
+        list: true
+        description: "Optional. Reihenfolge = Reihenfolge der Schritte."
+        fields:
+          - name: bild
+            label: Bild
+            type: image
+          - name: text
+            label: Bildunterschrift
+            type: string
+      - name: video
+        label: Video
+        type: file
+        description: "Optional. MP4, möglichst unter 25 MB (z. B. mit HandBrake komprimieren). Startet stumm automatisch."
+        options:
+          extensions: [mp4, webm, mov]
+      - name: download
+        label: Video zum Herunterladen anbieten
+        type: boolean
+        default: true
+      - name: body
+        label: Infotext
+        type: rich-text
+        description: "Optional."
