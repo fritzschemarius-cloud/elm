@@ -1,0 +1,39 @@
+---
+layout: null
+---
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>QR-Codes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+body{font:1rem/1.4 system-ui,sans-serif;color:#1D2433;margin:1.5rem}
+.hinweis{color:#5B6475;margin:0 0 1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.5cm,1fr));gap:1rem}
+.karte{border:1px dashed #BFC5CF;padding:.8rem;text-align:center;break-inside:avoid}
+.karte .code svg{width:5cm;height:5cm}
+.karte h2{font-size:1.05rem;margin:.4rem 0 .2rem}
+.karte small{color:#5B6475;word-break:break-all}
+button{font:inherit;padding:.5rem 1rem;margin-bottom:1rem;cursor:pointer}
+@media print{button,.hinweis{display:none}body{margin:0}}
+</style></head>
+<body>
+<button onclick="print()">Drucken</button>
+<p class="hinweis">Alle Aufgaben mit QR-Code. Diese Seite ist nirgends verlinkt.</p>
+<div class="grid">
+{% assign liste = site.aufgaben | sort: "url" %}
+{% for a in liste %}
+  <div class="karte" data-url="{{ a.url | relative_url }}">
+    <div class="code"></div>
+    <h2>{{ a.title }}</h2>
+    <small></small>
+  </div>
+{% endfor %}
+</div>
+<script>
+document.querySelectorAll('.karte').forEach(function(k){
+  var url=new URL(k.dataset.url.replace(/\.html$/,''),location.href).href;
+  var q=qrcode(0,'M'); q.addData(url); q.make();
+  k.querySelector('.code').innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true});
+  k.querySelector('small').textContent=url;
+});
+</script>
+</body></html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ page.title }}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+<style>
+:root{--paper:#FAFAF7;--ink:#1D2433;--muted:#5B6475;--line:#DDE1E8;--accent:#2B59C3;--accent-ink:#fff;--shade:#EEF0EC;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--paper:#14181F;--ink:#E8EBF0;--muted:#9AA3B2;--line:#2C3340;--accent:#7FA2F0;--accent-ink:#0E1420;--shade:#1C222B}}
+*,*::before,*::after{box-sizing:inherit}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:1.125rem/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:46rem;margin:0 auto;padding:1.25rem 1rem 3rem}
+h1{font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.15;margin:.25rem 0 1.25rem;letter-spacing:-.01em;font-weight:750}
+section{margin:0 0 2rem}
+img,video{max-width:100%;display:block}
+.serie{position:relative}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.75rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:10px}
+.track::-webkit-scrollbar{display:none}
+figure{flex:0 0 100%;margin:0;scroll-snap-align:center}
+figure img{width:100%;max-height:70vh;object-fit:contain;background:var(--shade);border-radius:10px}
+figcaption{margin-top:.6rem;font-size:1.05rem}
+figcaption .schritt{color:var(--muted);font-size:.9rem;display:block}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-top:.75rem;gap:1rem}
+.nav button{font:inherit;font-size:1rem;padding:.6rem 1.1rem;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;min-width:6.5rem}
+.nav button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center}
+.dots span{width:.55rem;height:.55rem;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--ink)}
+.videobox{position:relative}
+.videobox video{width:100%;border-radius:10px;background:#000}
+.ton{position:absolute;left:50%;bottom:4.2rem;transform:translateX(-50%);font:inherit;font-weight:650;font-size:1.05rem;
+  padding:.75rem 1.4rem;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.ton[hidden]{display:none}
+.dl{display:inline-block;margin-top:.7rem;color:var(--accent);font-weight:600;text-underline-offset:3px}
+.text{max-width:38rem}
+.text h2,.text h3{line-height:1.25;margin:1.5rem 0 .5rem}
+.text p{margin:0 0 1rem}
+.text img{border-radius:8px;margin:1rem 0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+  <h1>{{ page.title }}</h1>
+
+  {% if page.bilder and page.bilder.size > 0 %}
+  {% assign n = page.bilder.size %}
+  <section class="serie" aria-label="Bilderserie">
+    <div class="track" tabindex="0">
+      {% for b in page.bilder %}
+      {% capture alt %}{% if b.text and b.text != "" %}{{ b.text }}{% else %}Schritt {{ forloop.index }}{% endif %}{% endcapture %}
+      <figure>
+        <img src="{{ b.bild | relative_url }}" alt="{{ alt | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+        {% if n > 1 or b.text %}
+        <figcaption>{% if n > 1 %}<span class="schritt">Schritt {{ forloop.index }} von {{ n }}</span>{% endif %}{{ b.text }}</figcaption>
+        {% endif %}
+      </figure>
+      {% endfor %}
+    </div>
+    {% if n > 1 %}
+    <div class="nav">
+      <button type="button" data-dir="-1">Zurück</button>
+      <div class="dots" aria-hidden="true">{% for b in page.bilder %}<span></span>{% endfor %}</div>
+      <button type="button" data-dir="1">Weiter</button>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if page.video and page.video != "" %}
+  <section class="videobox">
+    <video src="{{ page.video | relative_url }}" autoplay muted playsinline controls preload="auto"{% unless page.download %} controlsList="nodownload"{% endunless %}></video>
+    <button type="button" class="ton">🔊 Ton an</button>
+    {% if page.download %}
+    <a class="dl" href="{{ page.video | relative_url }}" download>Video herunterladen</a>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% assign txt = content | strip_html | strip %}
+  {% if txt != "" %}
+  <section class="text">{{ content }}</section>
+  {% endif %}
+</main>
+
+<script>
+document.querySelectorAll('.serie').forEach(function(s){
+  var track=s.querySelector('.track'), figs=track.querySelectorAll('figure'),
+      dots=s.querySelectorAll('.dots span'), btns=s.querySelectorAll('.nav button');
+  if(!btns.length) return;
+  function idx(){return Math.round(track.scrollLeft/track.clientWidth)}
+  function update(){var i=idx();
+    dots.forEach(function(d,k){d.classList.toggle('on',k===i)});
+    btns[0].disabled=i<=0; btns[1].disabled=i>=figs.length-1;}
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    var i=Math.max(0,Math.min(figs.length-1,idx()+(+b.dataset.dir)));
+    var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+    track.scrollTo({left:i*track.clientWidth,behavior:smooth?'smooth':'auto'});});});
+  track.addEventListener('scroll',function(){requestAnimationFrame(update)},{passive:true});
+  track.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight')btns[1].click(); if(e.key==='ArrowLeft')btns[0].click();});
+  update();
+});
+document.querySelectorAll('.videobox').forEach(function(box){
+  var v=box.querySelector('video'), t=box.querySelector('.ton');
+  function sync(){t.hidden=!v.muted}
+  t.addEventListener('click',function(){v.muted=false;v.volume=1;v.play().catch(function(){});sync();});
+  v.addEventListener('volumechange',sync);
+  v.play().catch(function(){});
+  sync();
+});
+</script>
+</body>
+</html>
